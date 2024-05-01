@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "biocypher-project-template"
+name = "biocypher-cbioportal"
 version = "0.5.37"
-description = "Template for creating a BioCypher-driven knowledge graph"
+description = "cBioPortal adapter for the BioCypher framework"
 authors = [
     "Sebastian Lobentanzer <sebastian.lobentanzer@gmail.com>",
     "Andreas Maier <andreas.maier-1@uni-hamburg.de>",
