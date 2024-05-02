@@ -9,19 +9,50 @@ disease:
     represented_as: node
     preferred_id: oncotree
     input_label: Disease
+    properties:
+        name: str
+        shortname: str
 
-disease disease association:
+study:
+    represented_as: node
+    input_label: Study
+    properties:
+        name: str
+        description: str
+        import_date: str
+        pmid: str
+
+patient:
+    synonym_for: case
+    represented_as: node
+    input_label: Patient
+    properties:
+        unique_patient_key: str
+
+sample:
+    is_a: material sample
+    represented_as: node
+    input_label: Sample
+    properties:
+        unique_sample_key: str
+        sample_type: str
+
+is child of:
+    is_a: [association, disease disease association]
+    represented_as: edge
+    input_label: isChildOf
+
+study disease association:
     is_a: association
     represented_as: edge
-    input_label: DiseaseDiseaseAssociation
+    input_label: StudyDiseaseAssociation
 
+has patient:
+    is_a: association
+    represented_as: edge
+    input_label: hasPatient
 
-# protein interaction:
-#     is_a: pairwise molecular interaction
-#     represented_as: edge
-#     input_label: protein_protein_interaction
-
-# protein to disease association:
-#     is_a: association
-#     represented_as: edge
-#     input_label: protein_disease_association
+from patient:
+    is_a: association
+    represented_as: edge
+    input_label: fromPatient

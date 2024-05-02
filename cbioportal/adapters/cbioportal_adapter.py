@@ -1,32 +1,11 @@
-import random
-import string
-from enum import Enum, auto
-from itertools import chain
 from typing import Optional
 from biocypher._logger import logger
 from bravado.client import SwaggerClient
+from cbioportal.adapters.node_field_classes import *
+from cbioportal.adapters.edge_field_classes import *
 
 logger.debug(f"Loading module {__name__}.")
 
-class DiseaseField(Enum):
-    """
-    Define possible fields the adapter can provide for diseases.
-    """
-
-    _ID = "cancerTypeId"
-    NAME = "name"
-    SHORTNAME = "shortName"
-    PARENT = "parent"
-    _LABEL = "Disease"
-
-
-class DiseaseDiseaseAssociationField(Enum):
-    """
-    Define possible fields the adapter can provide for disease-disease associations.
-    """
-    _SUBJECT = "cancerTypeId"
-    _OBJECT = "parent"
-    _LABEL = "DiseaseDiseaseAssociation"
 
 
 class CBioPortalAdapter:
@@ -61,6 +40,28 @@ class CBioPortalAdapter:
         # get cancer types
         if _type in [DiseaseField, DiseaseDiseaseAssociationField]:
             return self.cbioportal.Cancer_Types.getAllCancerTypesUsingGET().result()
+        if _type in [StudyField, StudyDiseaseAssociationField]:
+            return self.cbioportal.Studies.getAllStudiesUsingGET().result()
+        if _type in [PatientField, studyPatientAssociationField]:
+            return self.cbioportal.Patients.getAllPatientsUsingGET().result()
+        if _type in [SampleField, samplePatientAssociationField]:
+            studies = self.cbioportal.Studies.getAllStudiesUsingGET().result()
+            samples = []
+            print(f"Getting samples of {len(studies)} studies")
+            for i, study in enumerate(studies):
+                study_samples = self.cbioportal.Samples.getAllSamplesInStudyUsingGET(studyId=study.studyId).result()
+                print(f"Study {i+1}/{len(studies)}: {len(study_samples)} samples")
+                for sample in study_samples:
+                    # if not sample in samples:
+                        samples.append(sample)
+                # break
+            # print(samples)
+            return samples
+        if _type == "test":
+            print(dir(self.cbioportal))
+            patients = self.cbioportal.Patients.getAllPatientsUsingGET().result()
+            # print(samples[100])
+            # print(len(samples))
         else:
             raise ValueError(f"Node type {_type} not supported.")
 
@@ -77,6 +78,7 @@ class CBioPortalAdapter:
                     continue
                 else:
                     _props[field.value] = item[field.value]
+
             yield (_id, _type, _props)
 
     def get_nodes(self):
@@ -84,11 +86,12 @@ class CBioPortalAdapter:
         Returns a generator of node tuples for node types specified in the
         adapter constructor.
         """
-
         logger.info("Generating nodes.")
 
         yield from self._yield_node_type(self.get_data_from_api(DiseaseField), DiseaseField)
-
+        yield from self._yield_node_type(self.get_data_from_api(StudyField), StudyField)
+        yield from self._yield_node_type(self.get_data_from_api(PatientField), PatientField)
+        yield from self._yield_node_type(self.get_data_from_api(SampleField), SampleField)
 
     def _yield_edge_type(self, items, edge_type):
         for item in items:
@@ -113,6 +116,9 @@ class CBioPortalAdapter:
                     continue
                 else:
                     _props[field.value] = item[field.value]
+            
+            # if edge_type == studyPatientAssociationField:
+            #     print(_id, _subject, _object,_type, _props)
             yield (_id, _subject, _object,_type, _props)
 
     def get_edges(self):
@@ -127,6 +133,9 @@ class CBioPortalAdapter:
         logger.info("Generating edges.")
 
         yield from self._yield_edge_type(self.get_data_from_api(DiseaseDiseaseAssociationField), DiseaseDiseaseAssociationField)
+        yield from self._yield_edge_type(self.get_data_from_api(StudyDiseaseAssociationField), StudyDiseaseAssociationField)
+        yield from self._yield_edge_type(self.get_data_from_api(studyPatientAssociationField), studyPatientAssociationField)
+        yield from self._yield_edge_type(self.get_data_from_api(samplePatientAssociationField), samplePatientAssociationField)
 
     def get_node_count(self):
         """

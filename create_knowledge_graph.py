@@ -1,34 +1,48 @@
 from biocypher import BioCypher, Resource
-from cbioportal.adapters.cbioportal_adapter import (
-    CBioPortalAdapter,
-    DiseaseField,
-    DiseaseDiseaseAssociationField
-)
+from cbioportal.adapters.node_field_classes import *
+from cbioportal.adapters.edge_field_classes import *
+from cbioportal.adapters.cbioportal_adapter import CBioPortalAdapter
 
 # Instantiate the BioCypher interface
 # You can use `config/biocypher_config.yaml` to configure the framework or
 # supply settings via parameters below
 bc = BioCypher()
 
-# Choose protein adapter fields to include in the knowledge graph.
-# These are defined in the adapter (`adapter.py`).
 node_fields = [
-    # Proteins
-    # ExampleAdapterProteinField.ID,
-    # ExampleAdapterProteinField.SEQUENCE,
-    # ExampleAdapterProteinField.DESCRIPTION,
-    # ExampleAdapterProteinField.TAXON,
-    # Diseases
+
     DiseaseField._ID,
     DiseaseField.NAME,
     DiseaseField.SHORTNAME,
-    DiseaseField.PARENT,
+    StudyField.NAME,
+    StudyField.CITATION,
+    StudyField.DESCRIPTION,
+    StudyField.IMPORTDATE,
+    StudyField._ID,
+    StudyField.PMID,
+    DiseaseField._LABEL,
+    # StudyField._LABEL,
+    PatientField._ID,
+    PatientField.UNIQUEPATIENTKEY,
+    PatientField._LABEL,
+    SampleField._ID,
+    SampleField.SAMPLETYPE,
+    SampleField.UNIQUESAMPLEKEY,
+
 ]
 
 edge_fields = [
     DiseaseDiseaseAssociationField._SUBJECT,
     DiseaseDiseaseAssociationField._OBJECT,
-    DiseaseDiseaseAssociationField._LABEL
+    DiseaseDiseaseAssociationField._LABEL,
+    StudyDiseaseAssociationField._SUBJECT,
+    StudyDiseaseAssociationField._OBJECT,
+    StudyDiseaseAssociationField._LABEL,
+    studyPatientAssociationField._SUBJECT,
+    studyPatientAssociationField._OBJECT,
+    studyPatientAssociationField._LABEL,
+    samplePatientAssociationField._SUBJECT,
+    samplePatientAssociationField._OBJECT,
+    samplePatientAssociationField._LABEL
 
 
 ]
@@ -40,6 +54,8 @@ adapter = CBioPortalAdapter(
 )
 
 
+# adapter.get_data_from_api("test")
+# quit()
 # Create a knowledge graph from the adapter
 bc.write_nodes(adapter.get_nodes())
 bc.write_edges(adapter.get_edges())
