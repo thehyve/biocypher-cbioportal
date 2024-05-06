@@ -22,12 +22,13 @@ class CBioPortalAdapter:
 
     def __init__(
         self,
-        node_fields: Optional[list] = None,
-        edge_fields: Optional[list] = None,
+        node_types: Optional[list] = None,
+        edge_types: Optional[list] = None,
     ):
         self._init_api()
-        self.node_fields = node_fields
-        self.edge_fields = edge_fields
+        self.node_types = node_types
+        self.edge_types = edge_types
+        self.version = self.cbioportal.Info.getInfoUsingGET().result().dbVersion
 
     def _init_api(self):
         self.cbioportal = SwaggerClient.from_url('https://www.cbioportal.org/api/v2/api-docs',
@@ -59,7 +60,16 @@ class CBioPortalAdapter:
             return samples
         if _type == "test":
             print(dir(self.cbioportal))
-            patients = self.cbioportal.Patients.getAllPatientsUsingGET().result()
+            treatments = self.cbioportal.Treatments.getAllTreatmentsUsingGET().result()
+            print(treatments[0])
+            # gene_panel = self.cbioportal.Genes.getAllGenesUsingGET().result()
+            # # print(gene_panel)
+            # for gp in gene_panel:
+            #     print(gp.entrezGeneId)
+
+            #     genes = self.cbioportal.Gene_Panel_Data.getGenePanelDataUsingPOST(genePanelDataFilter =gp).result()
+            #     print(genes[0])
+            # patients = self.cbioportal.Patients.getAllPatientsUsingGET().result()
             # print(samples[100])
             # print(len(samples))
         else:
@@ -70,7 +80,7 @@ class CBioPortalAdapter:
         for item in items:
             _id = item[node_type._ID.value]
             _type = node_type._LABEL.value
-            _props = {}
+            _props = {"version": self.version}
             for field in node_type:
                 if field not in self.node_fields:
                     continue
@@ -88,10 +98,9 @@ class CBioPortalAdapter:
         """
         logger.info("Generating nodes.")
 
-        yield from self._yield_node_type(self.get_data_from_api(DiseaseField), DiseaseField)
-        yield from self._yield_node_type(self.get_data_from_api(StudyField), StudyField)
-        yield from self._yield_node_type(self.get_data_from_api(PatientField), PatientField)
-        yield from self._yield_node_type(self.get_data_from_api(SampleField), SampleField)
+        for node in self.node_types:
+            print("Generating nodes for ", node)
+            yield from self._yield_node_type(self.get_data_from_api(node), node)
 
     def _yield_edge_type(self, items, edge_type):
         for item in items:
@@ -104,7 +113,7 @@ class CBioPortalAdapter:
                 _id = str(hash((_subject, _object)))
 
             _type = edge_type._LABEL.value
-            _props = {}
+            _props = {"version": self.version}
             for field in edge_type:
                 if field not in self.edge_fields:
                     continue
@@ -131,11 +140,9 @@ class CBioPortalAdapter:
         """
 
         logger.info("Generating edges.")
-
-        yield from self._yield_edge_type(self.get_data_from_api(DiseaseDiseaseAssociationField), DiseaseDiseaseAssociationField)
-        yield from self._yield_edge_type(self.get_data_from_api(StudyDiseaseAssociationField), StudyDiseaseAssociationField)
-        yield from self._yield_edge_type(self.get_data_from_api(studyPatientAssociationField), studyPatientAssociationField)
-        yield from self._yield_edge_type(self.get_data_from_api(samplePatientAssociationField), samplePatientAssociationField)
+        for edge in self.edge_types:
+            print("Generating edges for ", edge)
+            yield from self._yield_edge_type(self.get_data_from_api(edge), edge)
 
     def get_node_count(self):
         """

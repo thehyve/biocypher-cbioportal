@@ -8,54 +8,28 @@ from cbioportal.adapters.cbioportal_adapter import CBioPortalAdapter
 # supply settings via parameters below
 bc = BioCypher()
 
-node_fields = [
-
-    DiseaseField._ID,
-    DiseaseField.NAME,
-    DiseaseField.SHORTNAME,
-    StudyField.NAME,
-    StudyField.CITATION,
-    StudyField.DESCRIPTION,
-    StudyField.IMPORTDATE,
-    StudyField._ID,
-    StudyField.PMID,
-    DiseaseField._LABEL,
-    # StudyField._LABEL,
-    PatientField._ID,
-    PatientField.UNIQUEPATIENTKEY,
-    PatientField._LABEL,
-    SampleField._ID,
-    SampleField.SAMPLETYPE,
-    SampleField.UNIQUESAMPLEKEY,
-
+node_types = [
+    DiseaseField,
+    StudyField,
+    PatientField,
+    SampleField
 ]
-
-edge_fields = [
-    DiseaseDiseaseAssociationField._SUBJECT,
-    DiseaseDiseaseAssociationField._OBJECT,
-    DiseaseDiseaseAssociationField._LABEL,
-    StudyDiseaseAssociationField._SUBJECT,
-    StudyDiseaseAssociationField._OBJECT,
-    StudyDiseaseAssociationField._LABEL,
-    studyPatientAssociationField._SUBJECT,
-    studyPatientAssociationField._OBJECT,
-    studyPatientAssociationField._LABEL,
-    samplePatientAssociationField._SUBJECT,
-    samplePatientAssociationField._OBJECT,
-    samplePatientAssociationField._LABEL
-
-
+edge_types = [
+    DiseaseDiseaseAssociationField,
+    StudyDiseaseAssociationField,
+    studyPatientAssociationField,
+    samplePatientAssociationField
 ]
 
 # Create a protein adapter instance
 adapter = CBioPortalAdapter(
-    node_fields = node_fields,
-    edge_fields= edge_fields
+    node_types=node_types,
+    edge_types=edge_types
 )
 
 
-# adapter.get_data_from_api("test")
-# quit()
+adapter.get_data_from_api("test")
+quit()
 # Create a knowledge graph from the adapter
 bc.write_nodes(adapter.get_nodes())
 bc.write_edges(adapter.get_edges())
