@@ -1,6 +1,6 @@
 from enum import Enum
 
-class DiseaseField(Enum):
+class CancerTypeField(Enum):
     """
     Define possible fields the adapter can provide for diseases.
     """
@@ -38,8 +38,21 @@ class SampleField(Enum):
     SAMPLETYPE = "sampleType"
     UNIQUESAMPLEKEY = "uniqueSampleKey"
 
+class SampleListField(Enum):
+    """
+    Define possible fields the adapter can provide for sample lists.
+    """
+    _ID = "sampleListId"
+    _LABEL = "SampleList"
+    DESCRIPTION = "description"
+    NAME = "name"
+    CATEGORY = "category"
+    SAMPLE_COUNT = "sampleCount"
+    SAMPLE_IDS = "sampleIds"
+
 class GeneField(Enum):
     _ID = "entrezGeneId"
+    _LABEL = "Gene"
     HUGO_GENE_SYMBOL = "hugoGeneSymbol"
     TYPE = "type"
     GENETIC_ENTITY_ID = "geneticEntityId"
@@ -48,16 +61,16 @@ class GenePanelField(Enum):
 	_ID = "genePanelId"
 	_LABEL = "GenePanel"
 	DESCRIPTION = "description"
-	GENES = "genes"
+	# GENES = "genes"
 
 class MolecularProfileField(Enum):
 	_ID = "molecularProfileId"
 	_LABEL = "MolecularProfile"
 	DESCRIPTION = "description"
-	DATATYPE = "dataType"
+	DATATYPE = "datatype"
 	GENERIC_ASSAY_TYPE = "genericAssayType"
 	MOLECULAR_ALTERATION_TYPE = "molecularAlterationType"
-	MOLECULAR_PROFILE_ID = "molecularProfileId"
+	# MOLECULAR_PROFILE_ID = "molecularProfileId"
 	NAME = "name"
 	PATIENT_LEVEL = "patientLevel"
 	PIVOT_THRESHOLD = "pivotThreshold"
@@ -65,3 +78,47 @@ class MolecularProfileField(Enum):
 	SORT_ORDER = "sortOrder"
 	STUDY = "study"
 	STUDY_ID = "studyId"
+     
+class ClinicalAttributesField(Enum):
+    _ID = "clinicalAttributeId"
+    _LABEL = "ClinicalAttribute"
+    DESCRIPTION = "description"
+    DATATYPE = "datatype"
+    NAME = "displayName"
+    PATIENT_ATTRIBUTE = "patientAttribute"
+    STUDY_ID = "studyId"
+    PRIORITY = "priority"
+
+class ClinicalDataField(Enum):
+    CLINICAL_ATTRIBUTE = "clinicalAttribute"
+    CLINICAL_ATTRIBUTE_ID = "clinicalAttributeId"
+    PATIENT_ATTRIBUTE = "patientAttribute"
+    # PATIENT_ID = "patientId"
+    # SAMPLE_ID = "sampleId"
+    # STUDY_ID = "studyId"
+    # UNIQUE_PATIENT_KEY = "uniquePatientKey"
+    # UNIQUE_SAMPLE_KEY = "uniqueSampleKey"
+    VALUE= "value"
+    _ID = "clinicalDataId"
+    _LABEL = "ClinicalData"
+
+class CopyNumberSegmentField(Enum):
+    CHROMOSOME = "chromosome"
+    END = "end"
+    NUM_OF_PROBES = "numOfProbes"
+    # PATIENT_ID = "patientId"
+    # SAMPLE_ID = "sampleId"
+    SEGMENT_MEAN = "segmentMean"
+    START = "start"
+    STUDY_ID = "studyId"
+     
+
+class PatientSampleStudyEntityField(Enum):
+    """
+    Define possible fields the adapter can provide for patient-sample-study entities.
+    """
+    PATIENT_ID = "patientId"
+    SAMPLE_ID = "sampleId"
+    STUDY_ID = "studyId"
+    _LABEL = "PatientSampleStudyEntity"
+    _ID = "id"

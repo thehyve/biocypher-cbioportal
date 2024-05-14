@@ -5,6 +5,15 @@
 #     preferred_id: uniprot
 #     input_label: uniprot_protein
 
+PatientSampleStudyEntity:
+    is_a: entity
+    represented_as: node
+    input_label: PatientSampleStudyEntity
+    properties:
+        sampleId: str
+        patientId: str
+        studyId: str
+
 disease:
     represented_as: node
     preferred_id: oncotree
@@ -37,6 +46,57 @@ sample:
         unique_sample_key: str
         sample_type: str
 
+sample list:
+    is_a: material sample
+    represented_as: node
+    input_label: SampleList
+    properties:
+        description: str
+        name: str
+        category: str
+        sampleCount: int
+
+gene:
+    is_a: biological entity
+    represented_as: node
+    preferred_id: hugo
+    input_label: Gene
+    properties:
+        name: str
+        description: str
+        hugoGeneSymbol: str
+        geneticEntity: str
+
+gene panel:
+    is_a: information content entity
+    represented_as: node
+    input_label: GenePanel
+    properties:
+        description: str
+
+molecular profile:
+    is_a: information content entity
+    represented_as: node
+    input_label: MolecularProfile
+    properties:
+        description: str
+        datatype: str
+        genericAssayType: str
+        molecularAlterationType: str
+        name: str
+        patientLevel: str
+
+clinical attribute:
+    is_a: information content entity
+    represented_as: node
+    input_label: ClinicalAttribute
+    properties:
+        name: str
+        description: str
+        datatype: str
+        patientAttribute: str
+        priority: str
+
 is child of:
     is_a: [association, disease disease association]
     represented_as: edge
@@ -56,3 +116,23 @@ from patient:
     is_a: association
     represented_as: edge
     input_label: fromPatient
+
+has study:
+    is_a: association
+    represented_as: edge
+    input_label: hasStudy
+
+has clinical attribute:
+    is_a: association
+    represented_as: edge
+    input_label: hasClinicalAttribute
+
+has gene:
+    is_a: association
+    represented_as: edge
+    input_label: hasGene
+
+part of:
+    is_a: association
+    represented_as: edge
+    input_label: partOf
