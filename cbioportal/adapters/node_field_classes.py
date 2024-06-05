@@ -48,7 +48,6 @@ class SampleListField(Enum):
     NAME = "name"
     CATEGORY = "category"
     SAMPLE_COUNT = "sampleCount"
-    SAMPLE_IDS = "sampleIds"
 
 class GeneField(Enum):
     _ID = "entrezGeneId"
@@ -111,14 +110,38 @@ class CopyNumberSegmentField(Enum):
     SEGMENT_MEAN = "segmentMean"
     START = "start"
     STUDY_ID = "studyId"
-     
 
-class PatientSampleStudyEntityField(Enum):
-    """
-    Define possible fields the adapter can provide for patient-sample-study entities.
-    """
-    PATIENT_ID = "patientId"
-    SAMPLE_ID = "sampleId"
-    STUDY_ID = "studyId"
-    _LABEL = "PatientSampleStudyEntity"
-    _ID = "id"
+# EXAMPLE
+# Mutation(alleleSpecificCopyNumber=None, aminoAcidChange=None, center='MSKCC', chr='15', driverFilter=None, driverFilterAnnotation=None, driverTiersFilter=None, driverTiersFilterAnnotation=None, endPosition=30700159, entrezGeneId=101059918, gene=None, keyword='GOLGA8R W275 missense', molecularProfileId='acbc_mskcc_2015_mutations', mutationStatus='SOMATIC', mutationType='Missense_Mutation', namespaceColumns=None, ncbiBuild='GRCh37', normalAltCount=None, normalRefCount=None, patientId='AdCC3T', proteinChange='W275R', proteinPosEnd=275, proteinPosStart=275, referenceAllele='A', refseqMrnaId='NM_001282484.1', sampleId='AdCC3T', startPosition=30700159, studyId='acbc_mskcc_2015', tumorAltCount=20, tumorRefCount=80, uniquePatientKey='QWRDQzNUOmFjYmNfbXNrY2NfMjAxNQ', uniqueSampleKey='QWRDQzNUOmFjYmNfbXNrY2NfMjAxNQ', validationStatus='Unknown', variantAllele='G', variantType='SNP')
+class MutationField(Enum):
+    ALLELE_SPECIFIC_COPY_NUMBER = "alleleSpecificCopyNumber"
+    AMINO_ACID_CHANGE = "aminoAcidChange"
+    CENTER = "center"
+    CHROMOSOME = "chr"
+    DRIVER_FILTER = "driverFilter"
+    DRIVER_FILTER_ANNOTATION = "driverFilterAnnotation"
+    DRIVER_TIERS_FILTER = "driverTiersFilter"
+    DRIVER_TIERS_FILTER_ANNOTATION = "driverTiersFilterAnnotation"
+    END_POSITION = "endPosition"
+    KEYWORD = "keyword"
+    MUTATION_STATUS = "mutationStatus"
+    MUTATION_TYPE = "mutationType"
+    NAMESPACE_COLUMNS = "namespaceColumns"
+    NCBI_BUILD = "ncbiBuild"
+    NORMAL_ALT_COUNT = "normalAltCount"
+    NORMAL_REF_COUNT = "normalRefCount"
+    PROTEIN_CHANGE = "proteinChange"
+    PROTEIN_POS_END = "proteinPosEnd"
+    PROTEIN_POS_START = "proteinPosStart"
+    REFERENCE_ALLELE = "referenceAllele"
+    REFSEQ_MRNA_ID = "refseqMrnaId"
+    START_POSITION = "startPosition"
+    TUMOR_ALT_COUNT = "tumorAltCount"
+    TUMOR_REF_COUNT = "tumorRefCount"
+    UNIQUE_PATIENT_KEY = "uniquePatientKey"
+    UNIQUE_SAMPLE_KEY = "uniqueSampleKey"
+    VALIDATION_STATUS = "validationStatus"
+    VARIANT_ALLELE = "variantAllele"
+    VARIANT_TYPE = "variantType"
+    _ID = ["molecularProfileId", "sampleId", "patientId", "entrezGeneId", "studyId"]
+    _LABEL = "Mutation"

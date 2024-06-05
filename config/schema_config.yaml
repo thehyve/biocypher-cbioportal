@@ -97,6 +97,41 @@ clinical attribute:
         patientAttribute: str
         priority: str
 
+mutation:
+    is_a: molecular entity
+    represented_as: node
+    input_label: Mutation
+    properties:
+        allele_specific_copy_number: str
+        amino_acid_change: str
+        c_position: str
+        chromosome: str
+        end_position: str
+        start_position: str
+        keyword: str
+        mutation_status: str
+        mutation_type: str
+        ncbi_build: str
+        normal_alt_count: str
+        normal_ref_count: str
+        protein_change: str
+        protein_pos_start: str
+        protein_pos_end: str
+        reference_allele: str
+        variant_allele: str
+        refseq_mrna_id: str
+        tumor_alt_count: str
+        tumor_ref_count: str
+        unique_sample_key: str
+        unique_patient_key: str
+        validation_status: str
+        variant_type: str
+
+
+
+# ---------------------------------------------------
+# associations
+
 is child of:
     is_a: [association, disease disease association]
     represented_as: edge
@@ -127,12 +162,22 @@ has clinical attribute:
     represented_as: edge
     input_label: hasClinicalAttribute
 
-has gene:
-    is_a: association
-    represented_as: edge
-    input_label: hasGene
-
 part of:
     is_a: association
     represented_as: edge
     input_label: partOf
+
+from sample:
+    is_a: association
+    represented_as: edge
+    input_label: fromSample
+
+from gene:
+    is_a: association
+    represented_as: edge
+    input_label: fromGene
+
+from molecular profile:
+    is_a: association
+    represented_as: edge
+    input_label: fromMolecularProfile

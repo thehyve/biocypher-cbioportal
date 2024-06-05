@@ -35,14 +35,6 @@ class samplePatientAssociationField(Enum):
     _OBJECT = "patientId"
     _LABEL = "fromPatient"
 
-class GenePanelGeneAssociationField(Enum):
-    """
-    Define possible fields the adapter can provide for genePanel-gene associations.
-    """
-    _SUBJECT = "genePanelId"
-    _OBJECT = "genes"
-    _LABEL = "hasGene"
-
 class MolecularProfiletoStudyField(Enum):
     """
     Define possible fields the adapter can provide for molecular profile - study associations.
@@ -75,27 +67,42 @@ class CopyNumberSegmentToSampleField(Enum):
     _OBJECT = "sampleId"
     _LABEL = "fromSample"
 
+class mutationToSampleField(Enum):
+    """
+    Define possible fields the adapter can provide for mutation - sample associations.
+    """
+    _SUBJECT = ["molecularProfileId", "sampleId", "patientId", "entrezGeneId", "studyId"]
+    _OBJECT = "sampleId"
+    _LABEL = "fromSample"
 
-class PatientToPatientSampleStudyEntityField(Enum):
+class mutationToGeneField(Enum):
     """
-    Define possible fields the adapter can provide for patient - patient sample study entity associations.
+    Define possible fields the adapter can provide for mutation - gene associations.
     """
-    _SUBJECT = "patientId"
-    _OBJECT = "id"
-    _LABEL = "partOf"
+    _SUBJECT = ["molecularProfileId", "sampleId", "patientId", "entrezGeneId", "studyId"]
+    _OBJECT = "entrezGeneId"
+    _LABEL = "fromGene"
 
-class SampleToPatientSampleStudyEntityField(Enum):
+class mutationToStudyField(Enum):
     """
-    Define possible fields the adapter can provide for sample - patient sample study entity associations.
+    Define possible fields the adapter can provide for mutation - study associations.
     """
-    _SUBJECT = "sampleId"
-    _OBJECT = "id"
-    _LABEL = "partOf"
+    _SUBJECT = ["molecularProfileId", "sampleId", "patientId", "entrezGeneId", "studyId"]
+    _OBJECT = "studyId"
+    _LABEL = "hasStudy"
 
-class StudyToPatientSampleStudyEntityField(Enum):
+class mutationToPatientField(Enum):
     """
-    Define possible fields the adapter can provide for study - patient sample study entity associations.
+    Define possible fields the adapter can provide for mutation - patient associations.
     """
-    _SUBJECT = "studyId"
-    _OBJECT = "id"
-    _LABEL = "partOf"
+    _SUBJECT = ["molecularProfileId", "sampleId", "patientId", "entrezGeneId", "studyId"]
+    _OBJECT = "patientId"
+    _LABEL = "fromPatient"
+
+class mutationToMolecularProfileField(Enum):
+    """
+    Define possible fields the adapter can provide for mutation - molecular profile associations.
+    """
+    _SUBJECT = ["molecularProfileId", "sampleId", "patientId", "entrezGeneId", "studyId"]
+    _OBJECT = "molecularProfileId"
+    _LABEL = "fromMolecularProfile"

@@ -10,29 +10,31 @@ from cbioportal.adapters.cbioportal_adapter import CBioPortalAdapter
 bc = BioCypher()
 
 node_types = [
-    PatientSampleStudyEntityField,
+    MutationField,
     MolecularProfileField,
-    SampleListField,
-    ClinicalAttributesField,
+    # SampleListField,
+    # ClinicalAttributesField,
     GeneField,
-    GenePanelField,
-    CancerTypeField,
+    # GenePanelField,
+    # CancerTypeField,
     StudyField,
     PatientField,
-    SampleField
+    SampleField,
 ]
 edge_types = [
-    PatientToPatientSampleStudyEntityField,
-    SampleToPatientSampleStudyEntityField,
-    StudyToPatientSampleStudyEntityField,
-    SampleListToStudyField,
-    StudyToClinicalDataField,
-    MolecularProfiletoStudyField,
-    GenePanelGeneAssociationField,
-    DiseaseDiseaseAssociationField,
-    StudyDiseaseAssociationField,
-    studyPatientAssociationField,
-    samplePatientAssociationField
+    # SampleListToStudyField,
+    # StudyToClinicalDataField,
+    # MolecularProfiletoStudyField,
+    # DiseaseDiseaseAssociationField,
+    # StudyDiseaseAssociationField,
+    # studyPatientAssociationField,
+    # samplePatientAssociationField,
+    mutationToMolecularProfileField,
+    mutationToSampleField,
+    mutationToGeneField,
+    mutationToStudyField,
+    mutationToPatientField
+
 ]
 
 # Create a protein adapter instance

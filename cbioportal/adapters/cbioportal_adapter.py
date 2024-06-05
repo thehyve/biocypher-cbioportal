@@ -62,7 +62,6 @@ class CBioPortalAdapter:
         if _type in [SampleField, samplePatientAssociationField]:
             if "samples" in self.api_called: return self.api_called["samples"]
             self.api_called["samples"] = []
-            # studies = self.cbioportal.Studies.getAllStudiesUsingGET().result()
             studies = self.check_api_called(StudyField)
             print(f"Getting samples of {len(studies)} studies")
             for i, study in enumerate(studies):
@@ -75,12 +74,11 @@ class CBioPortalAdapter:
             if "sample_lists" in self.api_called: return self.api_called["sample_lists"]
             self.api_called["sample_lists"] = self.cbioportal.Sample_Lists.getAllSampleListsUsingGET().result()[0:self.limit]
             return self.api_called["sample_lists"]
-        
         if _type == GeneField:
             if "genes" in self.api_called: return self.api_called["genes"]
             self.api_called["genes"] = self.cbioportal.Genes.getAllGenesUsingGET().result()[0:self.limit]
             return self.api_called["genes"]
-        if _type in [GenePanelField, GenePanelGeneAssociationField]:
+        if _type in [GenePanelField]:
             if "gene_panels" in self.api_called: return self.api_called["gene_panels"]
             self.api_called["gene_panels"] = self.cbioportal.Gene_Panels.getAllGenePanelsUsingGET().result()[0:self.limit]
             return self.api_called["gene_panels"]
@@ -92,36 +90,42 @@ class CBioPortalAdapter:
             if "clinical_attributes" in self.api_called: return self.api_called["clinical_attributes"]
             self.api_called["clinical_attributes"] = self.cbioportal.Clinical_Attributes.getAllClinicalAttributesUsingGET().result()[0:self.limit]
             return self.api_called["clinical_attributes"]
-        if _type in [PatientSampleStudyEntityField, PatientToPatientSampleStudyEntityField, SampleToPatientSampleStudyEntityField, StudyToPatientSampleStudyEntityField]:
-            print("not correctly implemeted yet!")
-            return []
 
-            if "patient_sample_study_entities" in self.api_called: return self.api_called["patient_sample_study_entities"]
-            patients = self.check_api_called(PatientField)
-            samples = self.check_api_called(SampleField)
-            studies = self.check_api_called(StudyField)
-            self.api_called["patient_sample_study_entities"] = []
-            counter = 0
-            for _id1 in patients:
-                for _id2 in samples:
-                    for _id3 in studies:
-                        id = hash(f"{_id1.patientId}_{_id2.sampleId}_{_id3.studyId}")
-                        self.api_called["patient_sample_study_entities"].append({"patientId":_id1.patientId, "sampleId":_id2.sampleId, "studyId":_id3.studyId, "id":id})
-                        counter += 1
-                        if counter == self.limit:
-                            return self.api_called["patient_sample_study_entities"]
-            return self.api_called["patient_sample_study_entities"]
-        
+        if _type in [MutationField, mutationToSampleField, mutationToGeneField, mutationToStudyField, mutationToPatientField, mutationToMolecularProfileField]:
+            if "mutations" in self.api_called: return self.api_called["mutations"]
+            profiles = self.check_api_called(MolecularProfileField)
+            # get a list of all molecular profile ids of all the profiles
+            molecularProfileIds = [profile["molecularProfileId"] for profile in profiles]
+            print(f"Getting mutations in {len(molecularProfileIds)} molecular profiles")
+            mutations_per_profile = {}
+            def get_mutations_in_profile(profile_id):
+                try:
+                    return self.cbioportal.Mutations.fetchMutationsInMultipleMolecularProfilesUsingPOST(mutationMultipleStudyFilter = {"molecularProfileIds":[profile_id]}).result()[0:self.limit]
+                except HTTPNotFound:
+                    return []
+            for i, profile_id in enumerate(molecularProfileIds):
+                mutations_per_profile[profile_id] = get_mutations_in_profile(profile_id)
+                print(f"Profile {i+1}/{len(molecularProfileIds)}: {len(mutations_per_profile[profile_id])} mutations")
+            
+            self.api_called["mutations"] = [mutation for mutations in mutations_per_profile.values() for mutation in mutations]
+            print(f"found {len(self.api_called['mutations'])} mutations in {len(molecularProfileIds)} molecular profiles")
+            return self.api_called["mutations"]
         if _type == "test":
             print(dir(self.cbioportal))
-            gene_panels = self.cbioportal.Gene_Panels.getAllGenePanelsUsingGET().result()
-            print(gene_panels[0])
+
+
         else:
             raise ValueError(f"Node type {_type} not supported.")
 
     def _yield_node_type(self, items, node_type):
         for item in items:
-            _id = item[node_type._ID.value]
+            if isinstance(node_type._ID.value, str):
+                _id = item[node_type._ID.value] 
+            elif isinstance(node_type._ID.value, list):
+                _id = str(hash("_".join([str(item[field]) for field in node_type._ID.value])))
+            else:
+                raise ValueError("ID field must be a string or a list of strings.")
+            
             _type = node_type._LABEL.value
             _props = {"version": self.version}
             for field in node_type:
@@ -151,8 +155,19 @@ class CBioPortalAdapter:
 
     def _yield_edge_type(self, items, edge_type):
         for item in items:
-            _subject = item[edge_type._SUBJECT.value]
-            _object = item[edge_type._OBJECT.value]
+            if isinstance(edge_type._SUBJECT.value, str):
+                _subject = item[edge_type._SUBJECT.value] 
+            elif isinstance(edge_type._SUBJECT.value, list):
+                _subject = str(hash("_".join([str(item[field]) for field in edge_type._SUBJECT.value])))
+            else:
+                raise ValueError("_subject field must be a string or a list of strings.")
+            
+            if isinstance(edge_type._OBJECT.value, str):
+                _object = item[edge_type._OBJECT.value] 
+            elif isinstance(edge_type._OBJECT.value, list):
+                _object = str(hash("_".join([str(item[field]) for field in edge_type._OBJECT.value])))
+            else:
+                raise ValueError("_subject field must be a string or a list of strings.")
 
             try:
                 item[edge_type._ID.value]
